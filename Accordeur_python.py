@@ -1,6 +1,4 @@
-﻿"""le code a l'air de déconner avec les octaves,
-les notes sont toujours (quelques erreurs mais pas
-souvent) justes mais pas les octaves"""
+""" le code a du mal à suivre les octaves mais les notes sont bonnes en principe """
 
 import math
 import pyaudio
@@ -15,8 +13,7 @@ from scipy import signal
 from scipy.io import wavfile
 from scipy.fftpack import fft, ifft, fftfreq
 
-
-# Enregistrement de l'audio
+# --- Enregistrement de l'audio ---
 
 filename = "rec.wav"
 
@@ -27,7 +24,7 @@ sample_rate = 44100
 record_seconds = 2
 p = pyaudio.PyAudio()
 
-stream = p.open(format=FORMAT,
+stream = p.open(format = FORMAT,
                 channels = channels,
                 rate = sample_rate,
                 input = True,
@@ -55,10 +52,9 @@ wf.writeframes(b"".join(frames))
 wf.close()
 
 
-
 # Analyse de la fréquence
 
-frate,data = wavfile.read('rec.wav') # Récupération de l'audio enregistré précédemment
+frate,data = wavfile.read('rec.wav') # on récupère l'audio enregistré
 
 w = np.fft.fft(data) # Calcul et affichage de la fréquence
 freqs = np.fft.fftfreq(len(w))
@@ -67,26 +63,25 @@ idx = np.argmax(np.abs(w))
 freq = freqs[idx]
 freqhz = abs(freq * frate)
 
-##print(freqhz, "Hz")
+# print(freqhz, "Hz")
 
 
-
-# Importation des notes et fréquences d'Excel vers Python
+# On importe les notes et fréquences d'Excel vers Python
 
 source = open('fqnt.csv', 'r')
 N, F = [], []
-for row in csv.reader(source,delimiter=";"):
+for row in csv.reader(source, delimiter = ";"):
     N.append(row[0])
     F.append(row[1])
 
 
 # Correspondance entre la fréquence et la note
-v=int(input("précision"))
+v = int(input("précision"))
 for i in range(len(N)):
-    val=float(F[i])
+    val = float(F[i])
     if val>=(freqhz-v) and val<=(freqhz+v):
         note = N[i]
-        ##print(note)
+        # print(note)
 
 
 
@@ -99,7 +94,7 @@ freql = [freqhz-0.005, freqhz, freqhz+0.005]
 plt.plot(freqhz,freq,'bo-',lw=1,label='fréquence')
 plt.legend()
 plt.grid()
-plt.tick_params(        #permet de supprimer la légende à gauche du graphique
+plt.tick_params(        # permet de supprimer la légende à gauche du graphique
     axis='y',
     which='both',
     left=False,
